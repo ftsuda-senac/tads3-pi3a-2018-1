@@ -15,6 +15,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -92,10 +93,15 @@ public class Agenda {
         try {
             // 1) Inclusao
             Pessoa p1 = new Pessoa();
-            p1.setNome("Joao de Souza");
-            String strDtNascimento = "1989-09-19";
-            DateFormat formatadorData = new SimpleDateFormat("yyyy-MM-dd");
-            p1.setDtNascimento(formatadorData.parse(strDtNascimento));
+            try (Scanner in = new Scanner(System.in)) {
+                System.out.println("Digite o nome:");
+                String nome = in.nextLine();
+                p1.setNome(nome);
+                System.out.println("Digite a data de nascimento no formato ano-mês-dia;");
+                String dtNasc = in.nextLine();
+                DateFormat formatadorData = new SimpleDateFormat("yyyy-MM-dd");
+                p1.setDtNascimento(formatadorData.parse(dtNasc));
+            }
             agenda.incluir(p1);
 
             // 2) Consulta
