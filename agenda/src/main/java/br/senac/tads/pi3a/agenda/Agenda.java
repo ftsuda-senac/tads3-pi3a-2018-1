@@ -117,7 +117,19 @@ public class Agenda {
         }
         
         for (int i = 0; i < 10; i++) {
-            System.out.println("Contador: " + i);
+            int j = i % 3;
+            switch(j) {
+                case 0:
+                    System.out.println("Contador resto 0: " + i);
+                    break;
+                case 1:
+                    System.out.println("Contador resto 1: " + i);
+                    break;
+                case 2:
+                    System.out.println("Contador resto 2: " + i);
+                    break;
+            }
+            
         }
 
     }
