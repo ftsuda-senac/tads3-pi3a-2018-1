@@ -10,6 +10,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -68,23 +69,47 @@ public class Agenda {
         return lista;
     }
 
-    public void incluir(Pessoa p) throws ClassNotFoundException, SQLException {
+    public void incluir(Pessoa p, Contato email, Contato telefone) throws ClassNotFoundException, SQLException {
 
         String query = "INSERT INTO pessoa (nome, dtnascimento) VALUES (?, ?)";
+        String queryContato = "INSERT INTO contato(tipo, valor, idpessoa) VALUES (?, ?, ?)";
 
-        try (Connection conn = obterConexao();
-                PreparedStatement stmt = conn.prepareStatement(query)) {
+        try (Connection conn = obterConexao()) {
+            conn.setAutoCommit(false);
 
-            stmt.setString(1, p.getNome());
-//            String strDtNascimento = "1970-05-15";
-//            DateFormat formatadorData = new SimpleDateFormat("yyyy-MM-dd");
-//            Date dtNascimento = formatadorData.parse(strDtNascimento);
-            stmt.setDate(2, new java.sql.Date(p.getDtNascimento().getTime()));
+            try (PreparedStatement stmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
+                stmt.setString(1, p.getNome());
+                stmt.setDate(2, new java.sql.Date(p.getDtNascimento().getTime()));
+                stmt.executeUpdate();
 
-            stmt.executeUpdate();
+                // Tenta recuperar o ID gerado no banco de dados
+                try (ResultSet chaves = stmt.getGeneratedKeys()) {
+                    if (chaves.next()) {
+                        long idPessoa = chaves.getLong(1);
 
+                        try (PreparedStatement stmt2 = conn.prepareStatement(queryContato)) {
+                            stmt2.setInt(1, email.getTipo());
+                            stmt2.setString(2, email.getValor());
+                            stmt2.setLong(3, idPessoa);
+                            stmt2.executeUpdate();
+                        }
+                        try (PreparedStatement stmt3 = conn.prepareStatement(queryContato)) {
+                            stmt3.setInt(1, telefone.getTipo());
+                            stmt3.setString(2, telefone.getValor());
+                            stmt3.setLong(3, idPessoa);
+                            stmt3.executeUpdate();
+                        }
+                        // Efetivar todas as operações no BD
+                        conn.commit();
+                    }
+                }
+
+            } catch (SQLException e) {
+                // Volta pra situação onde o autocommit foi definido como false
+                conn.rollback();
+                throw e;
+            }
         }
-
     }
 
     public static void main(String[] args) {
@@ -102,7 +127,15 @@ public class Agenda {
                 DateFormat formatadorData = new SimpleDateFormat("yyyy-MM-dd");
                 p1.setDtNascimento(formatadorData.parse(dtNasc));
             }
-            agenda.incluir(p1);
+            Contato email = new Contato();
+            email.setTipo(1);
+            email.setValor("fulano@zmail.com");
+
+            Contato telefone = new Contato();
+            telefone.setTipo(2);
+            telefone.setValor("(11) 99999-9999");
+
+            agenda.incluir(p1, email, telefone);
 
             // 2) Consulta
             List<Pessoa> lista = agenda.consultar();
@@ -114,22 +147,6 @@ public class Agenda {
             Logger.getLogger(Agenda.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ParseException ex) {
             Logger.getLogger(Agenda.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
-        for (int i = 0; i < 10; i++) {
-            int j = i % 3;
-            switch(j) {
-                case 0:
-                    System.out.println("Contador resto 0: " + i);
-                    break;
-                case 1:
-                    System.out.println("Contador resto 1: " + i);
-                    break;
-                case 2:
-                    System.out.println("Contador resto 2: " + i);
-                    break;
-            }
-            
         }
 
     }
