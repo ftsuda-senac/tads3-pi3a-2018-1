@@ -115,6 +115,10 @@ public class Agenda {
         } catch (ParseException ex) {
             Logger.getLogger(Agenda.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
+        for (int i = 0; i < 10; i++) {
+            System.out.println("Contador: " + i);
+        }
 
     }
 }
