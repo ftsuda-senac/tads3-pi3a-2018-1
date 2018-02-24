@@ -117,7 +117,12 @@ public class Agenda {
         }
         
         for (int i = 0; i < 10; i++) {
-            System.out.println("Contador: " + i);
+            if ( i % 2 == 0) {
+                System.out.println("Contador par: " + i);
+            } else {
+                System.out.println("Contador ímpar: " + i);
+            }
+            
         }
 
     }
