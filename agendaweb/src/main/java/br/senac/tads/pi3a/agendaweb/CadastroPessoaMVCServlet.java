@@ -13,6 +13,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  *
@@ -25,9 +26,21 @@ public class CadastroPessoaMVCServlet extends HttpServlet {
   @Override
   protected void doGet(HttpServletRequest request, HttpServletResponse response)
 	  throws ServletException, IOException {
-    
-    RequestDispatcher dispatcher = request.getRequestDispatcher("WEB-INF/jsp/pessoa-form.jsp");
-    dispatcher.forward(request, response);
+
+    HttpSession sessao = request.getSession();
+
+    Object p1 = sessao.getAttribute("xpto");
+    if (p1 != null) {
+      // Deve mostrar tela de resultados
+      request.setAttribute("xpto", p1);
+      sessao.removeAttribute("xpto");
+      RequestDispatcher dispatcher = request.getRequestDispatcher("WEB-INF/jsp/pessoa-resultado.jsp");
+      dispatcher.forward(request, response);
+    } else {
+      // Acesso padrão - deve mostrar tela de formulario
+      RequestDispatcher dispatcher = request.getRequestDispatcher("WEB-INF/jsp/pessoa-form.jsp");
+      dispatcher.forward(request, response);
+    }
   }
 
   @Override
@@ -39,10 +52,12 @@ public class CadastroPessoaMVCServlet extends HttpServlet {
     String telefone = request.getParameter("telefone");
 
     Pessoa p1 = new Pessoa(nome, dtNascimento, email, telefone);
-    request.setAttribute("xpto", p1);
 
-    RequestDispatcher dispatcher = request.getRequestDispatcher("WEB-INF/jsp/pessoa-resultado.jsp");
-    dispatcher.forward(request, response);
+    // POST-REDIRECT-GET
+    HttpSession sessao = request.getSession();
+    sessao.setAttribute("xpto", p1);
+    response.sendRedirect(request.getContextPath() + "/cadastro-pessoa");
+
   }
 
 }
