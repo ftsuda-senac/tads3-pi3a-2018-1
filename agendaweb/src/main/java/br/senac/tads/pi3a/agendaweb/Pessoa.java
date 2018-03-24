@@ -20,6 +20,10 @@ public class Pessoa {
 
   private Date dtNascimento;
 
+  private String email;
+
+  private String telefone;
+
   public Pessoa() {
   }
 
@@ -31,6 +35,12 @@ public class Pessoa {
     } catch (ParseException e) {
 
     }
+  }
+
+  public Pessoa(String nome, String dtNascimentoStr, String email, String telefone) {
+    this(nome, dtNascimentoStr);
+    this.email = email;
+    this.telefone = telefone;
   }
 
   public String getNome() {
@@ -47,6 +57,22 @@ public class Pessoa {
 
   public void setDtNascimento(Date dtNascimento) {
     this.dtNascimento = dtNascimento;
+  }
+
+  public String getEmail() {
+    return email;
+  }
+
+  public void setEmail(String email) {
+    this.email = email;
+  }
+
+  public String getTelefone() {
+    return telefone;
+  }
+
+  public void setTelefone(String telefone) {
+    this.telefone = telefone;
   }
 
 }

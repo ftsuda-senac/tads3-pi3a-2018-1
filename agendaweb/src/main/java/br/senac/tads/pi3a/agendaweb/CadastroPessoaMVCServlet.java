@@ -18,27 +18,31 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author fernando.tsuda
  */
-@WebServlet(name = "PessoaMVCServlet", urlPatterns = {"/pessoa-mvc"})
-public class PessoaMVCServlet extends HttpServlet {
+@WebServlet(name = "CadastroPessoaMVCServlet", urlPatterns = {"/cadastro-pessoa"})
+public class CadastroPessoaMVCServlet extends HttpServlet {
 
+  // Carrega o formulário de cadastro na tela do usuário
   @Override
   protected void doGet(HttpServletRequest request, HttpServletResponse response)
 	  throws ServletException, IOException {
     
-    String nome = request.getParameter("nome");
-    String dtNascimento = request.getParameter("dtnasc");
-
-    Pessoa p1 = new Pessoa(nome, dtNascimento);
-    request.setAttribute("xpto", p1);
-
-    RequestDispatcher dispatcher = request.getRequestDispatcher("WEB-INF/jsp/pessoa-mvc.jsp");
+    RequestDispatcher dispatcher = request.getRequestDispatcher("WEB-INF/jsp/pessoa-form.jsp");
     dispatcher.forward(request, response);
   }
 
   @Override
   protected void doPost(HttpServletRequest request, HttpServletResponse response)
 	  throws ServletException, IOException {
+    String nome = request.getParameter("nome");
+    String dtNascimento = request.getParameter("dtnasc");
+    String email = request.getParameter("email");
+    String telefone = request.getParameter("telefone");
 
+    Pessoa p1 = new Pessoa(nome, dtNascimento, email, telefone);
+    request.setAttribute("xpto", p1);
+
+    RequestDispatcher dispatcher = request.getRequestDispatcher("WEB-INF/jsp/pessoa-resultado.jsp");
+    dispatcher.forward(request, response);
   }
 
 }
