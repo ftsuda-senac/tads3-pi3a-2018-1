@@ -33,16 +33,22 @@ public class ExemploSessaoServlet extends HttpServlet {
   @Override
   protected void doPost(HttpServletRequest request, HttpServletResponse response)
 	  throws ServletException, IOException {
+    // Recupera o nome enviado na requisicao
     String nome = request.getParameter("nome");
+    
+    // Verifica se nome eh valido
     if (nome != null && !nome.trim().isEmpty()) {
       
-      // Adicionar na lista
+      // Cria ou recupera a sessao do usuario
       HttpSession sessao = request.getSession();
       if (sessao.getAttribute("pessoas") == null) {
+	// Se nao existir, adiciona uma nova lista vazia na sessao
 	sessao.setAttribute("pessoas", new ArrayList<String>());
       }
+      // Recupera a lista de nomes da sessao
       List<String> pessoas = 
 	      (List<String>) sessao.getAttribute("pessoas");
+      // Adiciona o nome na lista e salva como atributo na sessao
       pessoas.add(nome);
       sessao.setAttribute("pessoas", pessoas);
     }
