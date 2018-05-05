@@ -40,14 +40,13 @@ public class LoginServlet extends HttpServlet {
     String senha = request.getParameter("senha");
     
     // Validar as informações
-    if ("fulano".equals(username) && "abcd1234".equals(senha)) {
-      UsuarioSistema usuario = new  UsuarioSistema("fulano", 
-	      "Fulano da Silva", 
-	      "abcd1234", 
-	      Arrays.asList(new Papel("BASICO")));
+    UsuarioSistemaService service = new UsuarioSistemaService();
+    UsuarioSistema usuario = service.buscarPorUsername(username);
+    if (usuario != null && usuario.validarSenha(senha)) {
+
       HttpSession sessao = request.getSession();
       sessao.setAttribute("usuario", usuario);
-      response.sendRedirect(request.getContextPath() + "/exemplo-sessao");
+      response.sendRedirect(request.getContextPath() + "/home");
     } else {
       request.setAttribute("msgErro", "Usuário ou senha inválido");
       request.getRequestDispatcher("WEB-INF/jsp/erro-login.jsp")

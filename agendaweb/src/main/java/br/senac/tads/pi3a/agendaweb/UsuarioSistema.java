@@ -63,5 +63,21 @@ public class UsuarioSistema implements Serializable {
   public void setPapeis(List<Papel> papeis) {
     this.papeis = papeis;
   }
+  
+  public boolean validarSenha(String senha) {
+    if (this.senha != null) {
+      return this.senha.equals(senha);
+    }
+    return false;
+  }
+  
+  public boolean verificarPapel(String nomePapel) {
+    for (Papel p : papeis) {
+      if (p.getNome().equals(nomePapel)) {
+	return true;
+      }
+    }
+    return false;
+  }
 
 }
