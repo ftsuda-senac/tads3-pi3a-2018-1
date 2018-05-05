@@ -28,6 +28,12 @@ public class LoginServlet extends HttpServlet {
   protected void doGet(HttpServletRequest request, 
 	  HttpServletResponse response)
 	  throws ServletException, IOException {
+    // Logica para evitar q usuario logado acesse pagina de login
+    HttpSession sessao = request.getSession();
+    if (sessao.getAttribute("usuario") != null) {
+      response.sendRedirect(request.getContextPath() + "/home");
+      return;
+    }
     request.getRequestDispatcher("WEB-INF/jsp/login.jsp")
 	    .forward(request, response);
   }

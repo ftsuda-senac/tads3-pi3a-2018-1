@@ -8,6 +8,7 @@
   </head>
   <body>
     <h1>Bem vindo <c:out value="${sessionScope.usuario.nomeCompleto}" /></h1>
+    <p>Hash senha: <c:out value="${sessionScope.usuario.hashSenha}" /></p>
     <c:if test="${sessionScope.usuario.verificarPapel('FODA')}">
       <p>Usuário com Papel FODA pode ver esta mensagem</p>
     </c:if>

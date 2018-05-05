@@ -7,6 +7,7 @@ package br.senac.tads.pi3a.agendaweb;
 
 import java.io.Serializable;
 import java.util.List;
+import org.mindrot.jbcrypt.BCrypt;
 
 /**
  *
@@ -18,7 +19,7 @@ public class UsuarioSistema implements Serializable {
 
   private String nomeCompleto;
 
-  private String senha;
+  private String hashSenha;
 
   private List<Papel> papeis;
 
@@ -28,7 +29,7 @@ public class UsuarioSistema implements Serializable {
   public UsuarioSistema(String username, String nomeCompleto, String senha, List<Papel> papeis) {
     this.username = username;
     this.nomeCompleto = nomeCompleto;
-    this.senha = senha;
+    setSenha(senha);
     this.papeis = papeis;
   }
 
@@ -48,12 +49,16 @@ public class UsuarioSistema implements Serializable {
     this.nomeCompleto = nomeCompleto;
   }
 
-  public String getSenha() {
-    return senha;
+  public String getHashSenha() {
+    return hashSenha;
   }
 
-  public void setSenha(String senha) {
-    this.senha = senha;
+  public void setHashSenha(String hashSenha) {
+    this.hashSenha = hashSenha;
+  }
+  
+  public final void setSenha(String senhaAberta) {
+    this.hashSenha = BCrypt.hashpw(senhaAberta, BCrypt.gensalt());
   }
 
   public List<Papel> getPapeis() {
@@ -65,8 +70,8 @@ public class UsuarioSistema implements Serializable {
   }
   
   public boolean validarSenha(String senha) {
-    if (this.senha != null) {
-      return this.senha.equals(senha);
+    if (hashSenha != null) {
+      return BCrypt.checkpw(senha, hashSenha);
     }
     return false;
   }
